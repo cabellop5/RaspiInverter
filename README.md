@@ -8,3 +8,4 @@ This data are prepared and insert in InfluxDB for show in Grafana panels.
 
 Soon I will add the links to grafana dashboard and improvements.
 
+By the moment only get data from inverter, not can modify parameters.
