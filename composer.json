@@ -1,0 +1,12 @@
+{
+    "autoload": {
+        "psr-4": {
+            "RaspiInverter\\": "src/RaspiInverter"
+        }
+    },
+    "require": {
+        "influxdb/influxdb-php": "^1.14",
+        "pimple/pimple": "^3.2",
+        "symfony/http-foundation": "^3.4"
+    }
+}
