@@ -2,24 +2,39 @@
 
 namespace RaspiInverter;
 
+use RaspiInverter\Data\ConfigValues;
+use RaspiInverter\Data\CurrentValues;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class App
 {
     /**
-     * @var DataCollector
+     * @var CurrentValues
      */
-    private $dataCollector;
+    private $currentValues;
 
-    public function __construct(DataCollector $dataCollector)
+    /**
+     * @var ConfigValues
+     */
+    private $configValues;
+
+    public function __construct(CurrentValues $currentValues, ConfigValues $configValues)
     {
-        $this->dataCollector = $dataCollector;
+        $this->currentValues = $currentValues;
+        $this->configValues = $configValues;
     }
 
     public function run()
     {
-        $result = $this->dataCollector->get();
+        $result['current'] = $this->currentValues->get();
+        $result['config'] = $this->configValues->get();
 
-        return new JsonResponse($result, $result['code']);
+        if (isset($result['current']['code']) || isset($result['config']['code'])) {
+            $key = isset($result['current']['code']) ? 'current' : 'config';
+
+            return new JsonResponse($result[$key], $result[$key]['code']);
+        }
+
+        return new JsonResponse($result);
     }
 }

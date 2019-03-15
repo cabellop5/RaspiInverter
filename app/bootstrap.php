@@ -2,6 +2,8 @@
 
 use RaspiInverter\App;
 use RaspiInverter\Console;
+use RaspiInverter\Data\ConfigValues;
+use RaspiInverter\Data\CurrentValues;
 use RaspiInverter\DatabaseManager;
 use RaspiInverter\DataCollector;
 
@@ -10,11 +12,17 @@ $container['config'] = function () {
 };
 
 $container['console'] = function ($container) {
-    return new Console($container['data_collector'], $container['database_manager']);
+    return new Console(
+        $container['current_values'],
+        $container['database_manager']
+    );
 };
 
 $container['app'] = function ($container) {
-    return new App($container['data_collector']);
+    return new App(
+        $container['current_values'],
+        $container['config_values']
+    );
 };
 
 $container['database_manager'] = function ($container) {
@@ -31,8 +39,15 @@ $container['influx_client'] = function ($container) {
     );
 };
 
-$container['data_collector'] = function ($container) {
-    return new DataCollector(
+$container['config_values'] = function ($container) {
+    return new ConfigValues(
+        $container['config']['device'],
+        $container['config']['number_retries']
+    );
+};
+
+$container['current_values'] = function ($container) {
+    return new CurrentValues(
         $container['config']['device'],
         $container['config']['number_retries']
     );

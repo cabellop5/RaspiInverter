@@ -49,5 +49,7 @@ class DatabaseManager
         }
 
         $this->database = $this->client->selectDB($this->config['database_name']);
+
+        return $this->database;
     }
 }
