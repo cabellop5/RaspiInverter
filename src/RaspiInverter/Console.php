@@ -48,47 +48,57 @@ class Console
     public function run()
     {
         $result = $this->currentValues->get();
-
-        if (isset($result['code']) && 400 === (int)$result['code']) {
-            return;
-        }
-
         $points = [];
         $timestamp = (new \DateTime())->getTimestamp();
 
-        foreach ($result as $key => $value) {
+//        foreach ($result as $key => $value) {
+//
+//            if (!in_array($key, $this->keysToSave)) {
+//                continue;
+//            }
+//
+//            $points[] = new Point(
+//                $key,
+//                floatval($value),
+//                [],
+//                [],
+//                $timestamp
+//            );
+//        }
 
-            if (!in_array($key, $this->keysToSave)) {
-                continue;
-            }
-
+        if ($this->isDataForInsert($result)) {
             $points[] = new Point(
-                $key,
-                floatval($value),
+                'pip_query_general_status',
+                null,
                 [],
-                [],
+                $result,
                 $timestamp
             );
         }
 
-        $points[] = new Point(
-            'pip_query_general_status',
-            null,
-            [],
-            $result,
-            $timestamp
-        );
-
         $configs = $this->configValues->get();
 
-        $points[] = new Point(
-            'pip_query_device_rated_information',
-            null,
-            [],
-            $configs,
-            $timestamp
-        );
+        if ($this->isDataForInsert($configs)) {
+            $points[] = new Point(
+                'pip_query_device_rated_information',
+                null,
+                [],
+                $configs,
+                $timestamp
+            );
+        }
 
-        $this->databaseManager->insert($points);
+        if (!empty($points)) {
+            $this->databaseManager->insert($points);
+        }
+    }
+
+    /**
+     * @param $data
+     * @return bool
+     */
+    private function isDataForInsert($data)
+    {
+        return !(isset($data['code']) && 400 === (int)$data['code']);
     }
 }
