@@ -51,21 +51,6 @@ class Console
         $points = [];
         $timestamp = (new \DateTime())->getTimestamp();
 
-//        foreach ($result as $key => $value) {
-//
-//            if (!in_array($key, $this->keysToSave)) {
-//                continue;
-//            }
-//
-//            $points[] = new Point(
-//                $key,
-//                floatval($value),
-//                [],
-//                [],
-//                $timestamp
-//            );
-//        }
-
         if ($this->isDataForInsert($result)) {
             $points[] = new Point(
                 'pip_query_general_status',
