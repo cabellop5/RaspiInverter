@@ -61,7 +61,8 @@ class CurrentValues extends AbstractDataCollector
         $result['battery_voltage_from_scc'] = $this->result[14];
         $result['battery_discharge_current'] = $this->result[15];
         $result['device_status'] = $this->result[16];
-        $result['mask_b'] = $this->result[17]; $result['mask_c'] = $this->result[18];
+        $result['mask_b'] = $this->result[17];
+        $result['mask_c'] = $this->result[18];
         $result['pv_active_power'] = $this->result[19];
 
         return $result;

@@ -5,7 +5,6 @@ use RaspiInverter\Console;
 use RaspiInverter\Data\ConfigValues;
 use RaspiInverter\Data\CurrentValues;
 use RaspiInverter\DatabaseManager;
-use RaspiInverter\DataCollector;
 
 $container['config'] = function () {
     return require_once __DIR__ . '/config.php';
@@ -14,7 +13,8 @@ $container['config'] = function () {
 $container['console'] = function ($container) {
     return new Console(
         $container['current_values'],
-        $container['database_manager']
+        $container['database_manager'],
+        $container['config_values']
     );
 };
 

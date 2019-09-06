@@ -3,6 +3,7 @@
 namespace RaspiInverter;
 
 use InfluxDB\Point;
+use RaspiInverter\Data\ConfigValues;
 use RaspiInverter\Data\CurrentValues;
 
 class Console
@@ -11,6 +12,11 @@ class Console
      * @var CurrentValues $currentValues
      */
     private $currentValues;
+
+    /**
+     * @var ConfigValues
+     */
+    private $configValues;
 
     /**
      * @var DatabaseManager
@@ -32,15 +38,21 @@ class Console
         'pv_active_power',
     ];
 
-    public function __construct(CurrentValues $currentValues, DatabaseManager $databaseManager)
+    public function __construct(CurrentValues $currentValues, DatabaseManager $databaseManager, ConfigValues $configValues)
     {
         $this->currentValues = $currentValues;
         $this->databaseManager = $databaseManager;
+        $this->configValues = $configValues;
     }
 
     public function run()
     {
         $result = $this->currentValues->get();
+
+        if (isset($result['code']) && 400 === (int)$result['code']) {
+            return;
+        }
+
         $points = [];
         $timestamp = (new \DateTime())->getTimestamp();
 
@@ -59,8 +71,24 @@ class Console
             );
         }
 
-        if (!empty($points)) {
-            $this->databaseManager->insert($points);
-        }
+        $points[] = new Point(
+            'pip_query_general_status',
+            null,
+            [],
+            $result,
+            $timestamp
+        );
+
+        $configs = $this->configValues->get();
+
+        $points[] = new Point(
+            'pip_query_device_rated_information',
+            null,
+            [],
+            $configs,
+            $timestamp
+        );
+
+        $this->databaseManager->insert($points);
     }
 }
